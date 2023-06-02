@@ -1,4 +1,4 @@
-from math import floor, log10
+from math import *
 
 class pilha:
 
@@ -170,7 +170,7 @@ def identifica_numero(calc,i):
         else:return numero,i
 
 
-def indentifica_parenteces(calc,i):
+def identifica_parenteces(calc,i):
     opostos = {'(':')','[':']'}
     p = pilha()
     p.empurra(calc[i])
@@ -211,8 +211,16 @@ def tratamento(calc):
             info = identifica_numero(calc,i)
             operacoes += [info[0]]
             i = info[1]
+        elif c.isalpha():
+            func = ''
+            while calc[i]!='[':
+                func += calc[i]
+                i+=1
+            info = identifica_parenteces(calc,i)
+            operacoes += [eval(func+'('+str(processar(info[0]) )+')' )]
+            i = info[1]
         elif c=='(':
-            info = indentifica_parenteces(calc,i)
+            info = identifica_parenteces(calc,i)
             calc = calc[:i] + info[0] + calc[info[1]+1:]
         else:
             i += 1
