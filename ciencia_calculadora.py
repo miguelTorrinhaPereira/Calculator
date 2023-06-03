@@ -60,7 +60,6 @@ def alg_dec(n):
     return max(algs,0)
 
 def correct_algs_sig(n,algs,algs_atual):
-    print(n,algs,algs_atual)
     if algs_atual == algs:pass
     elif algs_atual < algs:n = n + '.'*('.'not in n) + '0' * (algs - algs_atual)
     else:
@@ -77,7 +76,7 @@ def correct_algs_sig(n,algs,algs_atual):
         else:
             n = n[:len(n) - (algs_atual - algs - 1)]
             n = rounds(n)
-            return exp_form(n)
+            if alg_sig(n)==algs+1:return correct_algs_sig(n,algs,algs+1)
     return exp_form(n)
 
 
@@ -119,6 +118,13 @@ def mult(n1, n2):
     return correct_algs_sig(n,algs,algs_atual)
 
 
+def exp(n1, n2):
+    n = str(eval('{}**{}'.format(n1, n2)))
+    algs = alg_sig(n1)
+    algs_atual = alg_sig(n)
+    return correct_algs_sig(n,algs,algs_atual)
+
+
 def div(n1, n2):
     n = str(eval('{}/{}'.format(n1, n2)))
     algs = min(alg_sig(n1), alg_sig(n2))
@@ -149,6 +155,10 @@ def calcula_aux(operacoes,i,operacao):
 def calcula(operacoes):
     i = 0
     while i < len(operacoes):
+        if operacoes[i] == '**':calcula_aux(operacoes,i,exp)
+        else:i += 1
+    i += 0
+    while i < len(operacoes):
         if operacoes[i] == '*':calcula_aux(operacoes,i,mult)
         elif operacoes[i] == '/':calcula_aux(operacoes,i,div)
         else: i += 1
@@ -165,8 +175,7 @@ def identifica_numero(calc,i):
     while True:
         i += 1
         digit = calc[i]
-        if digit.isdigit() or digit == 'e' or digit == '.' or digit == '-':
-            numero += digit
+        if digit.isdigit() or digit == 'e' or digit == '.' or digit == '-':numero += digit
         else:return numero,i
 
 
@@ -178,11 +187,10 @@ def identifica_parenteces(calc,i):
     while True:
         i += 1
         c = calc[i]
-        if c == '(' or c == '[':p.empurra('(')
+        if c == '(' or c == '[':p.empurra(c)
         elif c == opostos[p.ultimo()]:p.tira()
-        else:calc_p += c
         if p.vazia():return calc_p,i
-
+        calc_p += c
 
 
 def tratamento(calc):
@@ -200,10 +208,8 @@ def tratamento(calc):
     while i < len(calc):
         c = calc[i]
         if c == '^':
-            neg = calc[i+1] == '-'
-            exp,i = identifica_numero(calc,i+1+neg)
-            if neg:exp = '-' + exp
-            operacoes[-1] = str(eval(operacoes[-1]+'**'+exp)).replace('+','')
+            operacoes += ['**']
+            i += 1
         elif c in operadores:
             operacoes += c
             i += 1
@@ -217,7 +223,11 @@ def tratamento(calc):
                 func += calc[i]
                 i+=1
             info = identifica_parenteces(calc,i)
-            operacoes += [eval(func+'('+str(processar(info[0]) )+')' )]
+            arg = processar(info[0])
+            algs = alg_sig(info[0])
+            n = str(eval(func+'('+arg+')' ))
+            algs_atual = alg_sig(n)
+            operacoes += [correct_algs_sig(n,algs,algs_atual)]
             i = info[1]
         elif c=='(':
             info = identifica_parenteces(calc,i)
