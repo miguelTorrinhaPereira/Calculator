@@ -175,7 +175,7 @@ def identifica_numero(calc,i):
     while True:
         i += 1
         digit = calc[i]
-        if digit.isdigit() or digit == 'e' or digit == '.' or digit == '-':numero += digit
+        if digit.isdigit() or digit == 'e' or digit == '.' or (digit == '-' and calc[i-1] == 'e'):numero += digit
         else:return numero,i
 
 
@@ -194,12 +194,6 @@ def identifica_parenteces(calc,i):
 
 
 def tratamento(calc):
-    dict_translate = {247:'/',215:'*',8722:'-'}
-
-    calc = calc.translate(dict_translate)
-    calc = calc.replace('√','sqrt')
-    calc = calc.replace('ln','log')
-    calc = calc.replace('fact','factorial')
 
     calc = calc + ' '
     operadores = ['+','-','*','/']
@@ -224,7 +218,7 @@ def tratamento(calc):
                 i+=1
             info = identifica_parenteces(calc,i)
             arg = processar(info[0])
-            algs = alg_sig(info[0])
+            algs = alg_sig(arg)
             n = str(eval(func+'('+arg+')' ))
             algs_atual = alg_sig(n)
             operacoes += [correct_algs_sig(n,algs,algs_atual)]

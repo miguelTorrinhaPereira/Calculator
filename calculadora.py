@@ -42,14 +42,17 @@ def calculate():
     exprecion = text.get(1.0,END)
 
     exprecion = exprecion.translate(dict_translate)
-    exprecion = exprecion.replace('^','**')
     exprecion = exprecion.replace('√','sqrt')
     exprecion = exprecion.replace('ln','log')
     exprecion = exprecion.replace('fact','factorial')
 
     try:
-        processar(exprecion)
-        value = calc_func(exprecion)
+        value = 0
+        if calc_func == 0:
+            exprecion = exprecion.replace('^','**').replace('[','(').replace(']',')')
+            value = eval(exprecion)
+        elif calc_func == 1:
+            value = processar(exprecion)
 
         global history,index_history
         solucion_shown = True
@@ -215,10 +218,10 @@ def switch():
 
 
 
-calc_func = eval
+calc_func = 0
 menu_tracker = False
 menu_active = False
-dict_translate = {247:'/',215:'*',8722:'-',91:'(',93:')'}
+dict_translate = {247:'/',215:'*',8722:'-'}
 width = 500
 height = 600
 switched = False
@@ -346,8 +349,8 @@ buttons += [[button_nd, button_exp, button_squared, button_expand, button_left_b
 menu = Frame(calculator)
 
 
-button_mode_normal = Button(menu,text='normal',bg=gray3,command=lambda:change_func(eval), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236, height=86,compound='center')
-button_mode_ciencia = Button(menu,text='ciência',bg=gray3,command=lambda:change_func(processar), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236,height=86, compound='center')
+button_mode_normal = Button(menu,text='normal',bg=gray3,command=lambda:change_func(0), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236, height=86,compound='center')
+button_mode_ciencia = Button(menu,text='ciência',bg=gray3,command=lambda:change_func(1), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236,height=86, compound='center')
 
 
 menu_buttons = [button_mode_normal,button_mode_ciencia]
