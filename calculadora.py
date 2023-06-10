@@ -1,5 +1,6 @@
 from tkinter import *
 from math import *
+from ciencia_calculadora import processar
 
 
 
@@ -47,7 +48,8 @@ def calculate():
     exprecion = exprecion.replace('fact','factorial')
 
     try:
-        value = eval(exprecion)
+        processar(exprecion)
+        value = calc_func(exprecion)
 
         global history,index_history
         solucion_shown = True
@@ -65,6 +67,14 @@ def calculate():
         pass
 
 
+def change_func(new_func):
+    global calc_func,menu_active,menu_tracker
+    calc_func = new_func
+    menu_active = False
+    menu_tracker = False
+    menu.place_forget()
+
+
 def update_letters():
     global letter_1,letter_2
     for i in buttons:
@@ -72,6 +82,8 @@ def update_letters():
         for j in range(0,3):i[j].config(font=(font_buttons,letter_2))
     button_expand.config(font=(font_buttons,letter_2))
     button_pi.config(font=(font_buttons,letter_1))
+    for i in menu_buttons:
+        i.config(font=(font_buttons,letter_1))
 
 
 def update_display(event):
@@ -97,11 +109,15 @@ def update_display(event):
         update_letters()
 
         for i in range(5):
-            for j in range(0+extra,8):
-                buttons[i][j].grid_forget()
             for j in range(3-extra,8):
                 buttons[i][j].config(width=size_x,height=size_y)
                 buttons[i][j].grid(row=i, column=j-3+extra)
+
+        if menu_active:
+            size_x_menu = int((width - 2*(bd_buttons*2+4))/2)
+            for i in range(2):
+                menu_buttons[i].config(width=size_x_menu)
+                menu_buttons[i].grid(row=0,column=i)
 
 
 def clear():
@@ -132,6 +148,7 @@ def move(n):
 
 def update_history():
     if solucion_shown:unshow_solucion()
+    text.delete(1.0,END)
     text.insert(1.0,history[index_history][:-1])
 
 def history_up():
@@ -140,12 +157,24 @@ def history_up():
         index_history += 1
         update_history()
 
+    global menu_tracker
+    if menu_tracker:
+        menu_tracker = False
+
 def history_down():
     global index_history
     if index_history>0:
         index_history -= 1
         update_history()
-
+    else:
+        global menu_tracker , menu_active
+        if menu_tracker and not menu_active:
+            menu.place(x=0,y=0)
+            menu_tracker = False
+            menu_active = True
+            update_display(None)
+        elif not menu_tracker:
+            menu_tracker = True
 
 def expand():
     global expanded
@@ -184,6 +213,11 @@ def switch():
 
 
 
+
+
+calc_func = eval
+menu_tracker = False
+menu_active = False
 dict_translate = {247:'/',215:'*',8722:'-',91:'(',93:')'}
 width = 500
 height = 600
@@ -307,6 +341,16 @@ buttons += [[button_nd, button_exp, button_squared, button_expand, button_left_b
            [button_cos,button_mod,button_square_root,button_4,button_5,button_6,button_minus,button_left_arrow],
            [button_tan,button_log,button_root,button_1,button_2,button_3,button_mult,button_up_arrow],
            [button_ln,button_10_power,button_pi,button_dot,button_0,button_equals,button_div,button_down_arrow]]
+
+
+menu = Frame(calculator)
+
+
+button_mode_normal = Button(menu,text='normal',bg=gray3,command=lambda:change_func(eval), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236, height=86,compound='center')
+button_mode_ciencia = Button(menu,text='ciência',bg=gray3,command=lambda:change_func(processar), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236,height=86, compound='center')
+
+
+menu_buttons = [button_mode_normal,button_mode_ciencia]
 
 
 calculator.bind('<Configure>',update_display)

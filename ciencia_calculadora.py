@@ -238,5 +238,5 @@ def tratamento(calc):
 
 
 def processar(calc):
-    try:return calcula(tratamento(calc))
-    except:pass
+    return calcula(tratamento(calc))
+    #except:pass
