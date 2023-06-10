@@ -157,7 +157,7 @@ def calcula(operacoes):
     while i < len(operacoes):
         if operacoes[i] == '**':calcula_aux(operacoes,i,exp)
         else:i += 1
-    i += 0
+    i = 0
     while i < len(operacoes):
         if operacoes[i] == '*':calcula_aux(operacoes,i,mult)
         elif operacoes[i] == '/':calcula_aux(operacoes,i,div)
@@ -239,4 +239,3 @@ def tratamento(calc):
 
 def processar(calc):
     return calcula(tratamento(calc))
-    #except:pass
