@@ -112,6 +112,9 @@ def update_display(event):
         update_letters()
 
         for i in range(5):
+            for j in range(3):
+                buttons[i][j].grid_forget()
+
             for j in range(3-extra,8):
                 buttons[i][j].config(width=size_x,height=size_y)
                 buttons[i][j].grid(row=i, column=j-3+extra)
