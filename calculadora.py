@@ -93,16 +93,19 @@ def update_display(event):
     global width,height
     if event == None or (event.widget == calculator and (width != event.width or height != event.height)):
 
+
         if event != None:
             width = event.width
             height = event.height
-
         calculator.geometry(f'{width}x{height}')
 
         text.place(width=width)
 
         extra = expanded * 3
-        size_x,size_y = int((width - (5+extra)*(bd_buttons*2+4))/(5+extra)),int((height - 100 - 5*(bd_buttons*2+4))/5)
+        # these program worked fine in windows , but i had to make some adjustments in order for it to work in linux (ofset).
+        ofset_x,ofset_y = -22 if expanded else -23, -8
+        print(ofset_x,ofset_y)
+        size_x,size_y = int((width - (5+extra)*(bd_buttons*2+4))/(5+extra))+ofset_x  ,int((height - 100 - 5*(bd_buttons*2+4))/5)+ofset_y
 
         global letter_1,letter_2
         letter_max_y, letter_x= size_y*0.47*0.75, size_x*0.75
@@ -122,7 +125,7 @@ def update_display(event):
         if menu_active:
             size_x_menu = int((width - 2*(bd_buttons*2+4))/2)
             for i in range(2):
-                menu_buttons[i].config(width=size_x_menu)
+                menu_buttons[i].config(width=size_x_menu-23)
                 menu_buttons[i].grid(row=0,column=i)
 
 
@@ -250,7 +253,7 @@ text.bind('<Key>',copy_paste)
 
 
 buttons = []
-button_size = 86
+size_x, size_y = 64,78
 pixel = PhotoImage(width=1,height=1)
 letter_1 = 30
 letter_2 = 25
@@ -267,59 +270,59 @@ button_frame = Frame(calculator)
 button_frame.place(x=0,y=100)
 
 
-button_expand = Button(button_frame, text='EXP', bg=gray3, command=expand, font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_expand = Button(button_frame, text='EXP', bg=gray3, command=expand, font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_expand.grid(row=0, column=0)
-button_left_brace = Button(button_frame, text='(', bg=gray2, command=lambda:insert('(',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_left_brace = Button(button_frame, text='(', bg=gray2, command=lambda:insert('(',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_left_brace.grid(row=0,column=1)
-button_right_brace = Button(button_frame, text=')', bg=gray2, command=lambda:insert(')',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_right_brace = Button(button_frame, text=')', bg=gray2, command=lambda:insert(')',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_right_brace.grid(row=0, column=2)
-button_ce = Button(button_frame, text='CE', bg=red, command=clear_every_thing, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_ce = Button(button_frame, text='CE', bg=red, command=clear_every_thing, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_ce.grid(row=0, column=3)
-button_c = Button(button_frame, text='C', bg=red, command=clear, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_c = Button(button_frame, text='C', bg=red, command=clear, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_c.grid(row=0, column=4)
 
-button_7 = Button(button_frame, text='7', bg=gray1, command=lambda:insert('7',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_7 = Button(button_frame, text='7', bg=gray1, command=lambda:insert('7',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_7.grid(row=1, column=0)
-button_8 = Button(button_frame, text='8', bg=gray1, command=lambda:insert('8',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_8 = Button(button_frame, text='8', bg=gray1, command=lambda:insert('8',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_8.grid(row=1, column=1)
-button_9 = Button(button_frame, text='9', bg=gray1, command=lambda:insert('9',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_9 = Button(button_frame, text='9', bg=gray1, command=lambda:insert('9',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_9.grid(row=1, column=2)
-button_plus = Button(button_frame, text='+', bg=orange, command=lambda:insert('+',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_plus = Button(button_frame, text='+', bg=orange, command=lambda:insert('+',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_plus.grid(row=1, column=3)
-button_left_arrow = Button(button_frame, text='←', bg=gray3, command=lambda:move(-1), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_left_arrow = Button(button_frame, text='←', bg=gray3, command=lambda:move(-1), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_left_arrow.grid(row=1, column=4)
 
-button_4 = Button(button_frame, text='4', bg=gray1, command=lambda:insert('4',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_4 = Button(button_frame, text='4', bg=gray1, command=lambda:insert('4',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_4.grid(row=2, column=0)
-button_5 = Button(button_frame, text='5', bg=gray1, command=lambda:insert('5',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_5 = Button(button_frame, text='5', bg=gray1, command=lambda:insert('5',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_5.grid(row=2, column=1)
-button_6 = Button(button_frame, text='6', bg=gray1, command=lambda:insert('6',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_6 = Button(button_frame, text='6', bg=gray1, command=lambda:insert('6',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_6.grid(row=2, column=2)
-button_minus = Button(button_frame, text='−', bg=orange, command=lambda:insert('−',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_minus = Button(button_frame, text='−', bg=orange, command=lambda:insert('−',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_minus.grid(row=2, column=3)
-button_right_arrow = Button(button_frame, text='→', bg=gray3, command=lambda:move(1), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_right_arrow = Button(button_frame, text='→', bg=gray3, command=lambda:move(1), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_right_arrow.grid(row=2, column=4)
 
-button_1 = Button(button_frame, text='1', bg=gray1, command=lambda:insert('1',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_1 = Button(button_frame, text='1', bg=gray1, command=lambda:insert('1',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_1.grid(row=3, column=0)
-button_2 = Button(button_frame, text='2', bg=gray1, command=lambda:insert('2',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_2 = Button(button_frame, text='2', bg=gray1, command=lambda:insert('2',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_2.grid(row=3, column=1)
-button_3 = Button(button_frame, text='3', bg=gray1, command=lambda:insert('3',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_3 = Button(button_frame, text='3', bg=gray1, command=lambda:insert('3',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_3.grid(row=3, column=2)
-button_mult = Button(button_frame, text='×', bg=orange, command=lambda:insert('×',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_mult = Button(button_frame, text='×', bg=orange, command=lambda:insert('×',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_mult.grid(row=3, column=3)
-button_up_arrow = Button(button_frame, text='↑', bg=gray3, command=history_up, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_up_arrow = Button(button_frame, text='↑', bg=gray3, command=history_up, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_up_arrow.grid(row=3, column=4)
 
-button_dot = Button(button_frame, text='.', bg=gray2, command=lambda:insert('.',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_dot = Button(button_frame, text='.', bg=gray2, command=lambda:insert('.',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_dot.grid(row=4, column=0)
-button_0 = Button(button_frame, text='0', bg=gray1, command=lambda:insert('0',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_0 = Button(button_frame, text='0', bg=gray1, command=lambda:insert('0',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_0.grid(row=4, column=1)
-button_equals = Button(button_frame, text='=', bg=orange, command=calculate, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_equals = Button(button_frame, text='=', bg=orange, command=calculate, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_equals.grid(row=4, column=2)
-button_div = Button(button_frame, text='÷', bg=orange, command=lambda:insert('÷',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_div = Button(button_frame, text='÷', bg=orange, command=lambda:insert('÷',0), font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_div.grid(row=4, column=3)
-button_down_arrow = Button(button_frame, text='↓', bg=gray3,command=history_down, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=button_size, height=button_size, compound='center')
+button_down_arrow = Button(button_frame, text='↓', bg=gray3,command=history_down, font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, width=size_x, height=size_y, compound='center')
 button_down_arrow.grid(row=4, column=4)
 
 
