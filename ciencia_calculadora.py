@@ -63,6 +63,9 @@ def correct_algs_sig(n,algs,algs_atual):
     if algs_atual == algs:pass
     elif algs_atual < algs:n = n + '.'*('.'not in n) + '0' * (algs - algs_atual)
     else:
+        if 'e' in n:
+            mant, exponent = n.split('e')
+            n = mant+'e'+str(int(exponent))
         if '.' not in n or len(n)-(algs_atual - algs)-1 < n.index('.'):
             expi = calc_exp(n)
             n = n.replace('.','')
@@ -74,9 +77,16 @@ def correct_algs_sig(n,algs,algs_atual):
             if 'e' not in n:return n + 'e' + str(expi) if expi != 0 else n
             else: return n.split('e')[0] + 'e' + str(expi)
         else:
-            n = n[:len(n) - (algs_atual - algs - 1)]
+            if 'e' in n:
+                n, exponent = n.split('e')
+                exponent = 'e'+exponent
+            else:
+                exponent = ''
+            n = n[:len(n) - (algs_atual - algs-1)]
             n = rounds(n)
-            if alg_sig(n)==algs+1:return correct_algs_sig(n,algs,algs+1)
+            if alg_sig(n)==algs+1:
+                return correct_algs_sig(n,algs,algs+1)
+            n = n + exponent
     return exp_form(n)
 
 
@@ -93,6 +103,8 @@ def calc_exp(n): return floor(log10(abs(eval(n))))
 
 
 def exp_form(n):
+  if 'e' in n:
+      return n
   exp = calc_exp(n)
   if exp == 0: exp = ''
   else:exp = 'e' + str(exp)
@@ -120,7 +132,7 @@ def mult(n1, n2):
 
 def exp(n1, n2):
     n = str(eval('{}**{}'.format(n1, n2)))
-    algs = alg_sig(n1)
+    algs = min(alg_sig(n1), alg_sig(n2))
     algs_atual = alg_sig(n)
     return correct_algs_sig(n,algs,algs_atual)
 
@@ -194,7 +206,6 @@ def identifica_parenteces(calc,i):
 
 
 def tratamento(calc):
-
     calc = calc + ' '
     operadores = ['+','-','*','/']
     operacoes = []
@@ -216,13 +227,10 @@ def tratamento(calc):
             while calc[i]!='[':
                 func += calc[i]
                 i+=1
-            info = identifica_parenteces(calc,i)
-            arg = processar(info[0])
-            algs = alg_sig(arg)
+            raw_arg,i = identifica_parenteces(calc,i)
+            arg = processar(raw_arg)
             n = str(eval(func+'('+arg+')' ))
-            algs_atual = alg_sig(n)
-            operacoes += [correct_algs_sig(n,algs,algs_atual)]
-            i = info[1]
+            operacoes += [correct_algs_sig(n,alg_sig(arg),alg_sig(n))]
         elif c=='(':
             info = identifica_parenteces(calc,i)
             calc = calc[:i] + info[0] + calc[info[1]+1:]

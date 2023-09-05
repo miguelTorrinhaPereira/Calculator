@@ -22,14 +22,27 @@ def insert(character,movement):
     if movement != 0: move(movement)
 
 
-def copy_paste(event):
-    if event.state == 4 and event.keysym == 'c':
-        content = text.selection_get()
-        calculator.clipboard_clear()
-        calculator.clipboard_append(content)
-    elif event.state == 4 and event.keysym == 'v':
-        text.insert('insert', calculator.selection_get(selection='CLIPBOARD'))
-    return "break"
+def input_manager(event):
+    if event.state == 4:
+        if event.keysym == 'c':
+            content = text.selection_get()
+            calculator.clipboard_clear()
+            calculator.clipboard_append(content)
+        elif event.keysym == 'v':
+            text.insert('insert', calculator.selection_get(selection='CLIPBOARD'))
+        elif event.keysym == 'BackSpace':
+            clear_every_thing()
+    if event.keysym == 'Return':
+        calculate()
+        return "break"
+    if event.keysym == 'Tab':
+        expand()
+        return "break"
+    if event.keysym == 'Escape':
+        show_menu()
+
+
+
 
 
 def calculate():
@@ -42,6 +55,8 @@ def calculate():
     exprecion = text.get(1.0,END)
 
     exprecion = exprecion.translate(dict_translate)
+    exprecion = exprecion.replace('e','2.718281828459045')
+    exprecion = exprecion.replace('π','3.141592653589793')
     exprecion = exprecion.replace('√','sqrt')
     exprecion = exprecion.replace('ln','log')
     exprecion = exprecion.replace('fact','factorial')
@@ -77,6 +92,13 @@ def change_func(new_func):
     menu_tracker = False
     menu.place_forget()
 
+def show_menu():
+    global menu_tracker,menu_active
+    menu.place(x=0,y=0)
+    menu_tracker = False
+    menu_active = True
+    update_display(None)
+
 
 def update_letters():
     global letter_1,letter_2
@@ -104,7 +126,6 @@ def update_display(event):
         extra = expanded * 3
         # these program worked fine in windows , but i had to make some adjustments in order for it to work in linux (ofset).
         ofset_x,ofset_y = -22 if expanded else -23, -8
-        print(ofset_x,ofset_y)
         size_x,size_y = int((width - (5+extra)*(bd_buttons*2+4))/(5+extra))+ofset_x  ,int((height - 100 - 5*(bd_buttons*2+4))/5)+ofset_y
 
         global letter_1,letter_2
@@ -178,10 +199,7 @@ def history_down():
     else:
         global menu_tracker , menu_active
         if menu_tracker and not menu_active:
-            menu.place(x=0,y=0)
-            menu_tracker = False
-            menu_active = True
-            update_display(None)
+            show_menu()
         elif not menu_tracker:
             menu_tracker = True
 
@@ -195,7 +213,7 @@ def expand():
 def switch():
     global switched
     if switched:
-        button_pi.config(text='pi',command=lambda:insert('pi',0))
+        button_pi.config(text='π',command=lambda:insert('π',0))
         button_exp.config(text='exp',command=lambda:insert('*10^',0))
         button_abs.config(text='abs',command=lambda:insert('abs[]',-1))
         button_mod.config(text='mod',command=lambda:insert('%',0))
@@ -247,9 +265,9 @@ calculator.minsize(300,300)
 text = Text(calculator,wrap=WORD,bd=2,bg='black',fg='white',insertbackground='white',font=('Arial',25))
 text.place(x=0,y=0,width=500,height=100)
 text.focus_set()
-text.bind('<Key>',lambda event:'break')
+#text.bind('<Key>',lambda event:'break')
 
-text.bind('<Key>',copy_paste)
+text.bind('<Key>', input_manager)
 
 
 buttons = []
@@ -328,9 +346,9 @@ button_down_arrow.grid(row=4, column=4)
 
 button_squared = Button(button_frame, text='x^2', bg=gray2,command=lambda:insert('^2',0) ,font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, compound='center')
 button_power = Button(button_frame, text='x^y', bg=gray2,command=lambda:insert('^',0) ,font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, compound='center')
-button_square_root = Button(button_frame, text='sqrt', bg=gray2,command=lambda:insert('√[]',-1) , font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, compound='center')
+button_square_root = Button(button_frame, text='√', bg=gray2,command=lambda:insert('√[]',-1) , font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, compound='center')
 button_root = Button(button_frame, text='rt', bg=gray2,command=lambda:insert('rt[,]',-2) ,font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, compound='center')
-button_pi = Button(button_frame, text='pi', bg=gray2,command=lambda:insert('pi',0) , font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, compound='center')
+button_pi = Button(button_frame, text='π', bg=gray2,command=lambda:insert('π',0) , font=(font_buttons, letter_1), bd=bd_buttons, image=pixel, compound='center')
 
 button_exp = Button(button_frame, text='exp', bg=gray2,command=lambda:insert('*10^',0) ,font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, compound='center')
 button_abs = Button(button_frame, text='abs', bg=gray2,command=lambda:insert('abs[]',-1) , font=(font_buttons, letter_2), bd=bd_buttons, image=pixel, compound='center')
