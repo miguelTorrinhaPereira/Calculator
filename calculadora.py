@@ -32,6 +32,10 @@ def input_manager(event):
             text.insert('insert', calculator.selection_get(selection='CLIPBOARD'))
         elif event.keysym == 'BackSpace':
             clear_every_thing()
+        elif event.keysym == 'Tab':
+            if expanded:
+                switch()
+            return "break"
     elif event.keysym == 'Return':
         calculate()
         return "break"
