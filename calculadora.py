@@ -368,7 +368,7 @@ menu = Frame(calculator)
 
 
 button_mode_normal = Button(menu,text='normal',fg=white,bg=gray3,command=lambda:change_func(0), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236, height=86,compound='center')
-button_mode_ciencia = Button(menu,text='ciência',fg=white,bg=gray3,command=lambda:change_func(1), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236,height=86, compound='center')
+button_mode_ciencia = Button(menu,text='science',fg=white,bg=gray3,command=lambda:change_func(1), font=(font_buttons,letter_1),bd=bd_buttons, image=pixel,width=236,height=86, compound='center')
 
 
 menu_buttons = [button_mode_normal,button_mode_ciencia]
